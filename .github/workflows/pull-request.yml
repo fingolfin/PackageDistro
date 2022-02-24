@@ -24,13 +24,11 @@ jobs:
       - name: "Determine what was added and what removed"
         id: detect-changes
         run: |
-            # determien which files were added and removed
-            # must turn off rename detection here, so we see it as "remove +
-            # add" and thus propertly detect if other packages depend on the
-            # old name
-            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^)
-            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^)
-            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^)
+            # turn off rename detection here, so we see renmes as "remove + add"
+            # and thus propertly detect if other packages depend on the old name
+            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^ --)
+            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ --)
+            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ --)
 
             echo "Packages added: $(added)"
             echo "Packages deleted: $(deleted)"
