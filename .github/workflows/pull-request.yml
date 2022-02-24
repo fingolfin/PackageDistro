@@ -28,15 +28,15 @@ jobs:
         run: |
             # turn off rename detection here, so we see renmes as "remove + add"
             # and thus propertly detect if other packages depend on the old name
-            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^ -- | xargs dirname)
-            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ -- | xargs dirname)
-            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ -- | xargs dirname)
+            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^ --)
+            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ --)
+            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ --)
 
             echo "Packages deleted: $deleted"
 
             MATRIX="{\"package\":["
             for PKG in ${deleted}; do
-              echo "${PKG}"
+              PKG=${PKG%"/meta.json"}
               MATRIX="${MATRIX}\"${PKG}\","
             done
             MATRIX="${MATRIX}]}"
@@ -46,7 +46,7 @@ jobs:
             echo "Packages modified: $modified"
             MATRIX="{\"package\":["
             for PKG in ${added} ${modified}; do
-              echo "${PKG}"
+              PKG=${PKG%"/meta.json"}
               MATRIX="${MATRIX}\"${PKG}\","
             done
             MATRIX="${MATRIX}]}"

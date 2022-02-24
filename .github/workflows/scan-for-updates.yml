@@ -50,13 +50,14 @@ jobs:
       - name: "Creates jobs for modified packages"
         id: get-names
         run: |
-            modified=$(git diff --name-only --no-renames --diff-filter=M | xargs dirname)
+            modified=$(git diff --name-only --no-renames --diff-filter=M)
 
             # HACK
             modified="aclib digraphs walrus"
 
             MATRIX="{\"package\":["
             for PKG in ${modified}; do
+              PKG=${PKG%"/meta.json"}
               echo "${PKG}"
               MATRIX="${MATRIX}\"${PKG}\","
             done
