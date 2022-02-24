@@ -23,9 +23,6 @@ jobs:
         with:
           fetch-depth: 5
 
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v3
-
       - name: "Determine what was added and what removed"
         id: detect-changes
         run: |

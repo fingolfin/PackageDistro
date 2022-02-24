@@ -41,14 +41,6 @@ jobs:
 
       - name: "Scan for updates"
         run: _tools/scan_for_updates.py
-        # TODO: have a variant of scan_for_updates.py which only downloads
-        # new packageinfo.g files (and possibly caches them), and then prints
-        # list of names of those which are new
-        # TODO: then we need a second script which takes the name of a single
-        # package (or equivalently takes the `path/to/its/meta.json`) and
-        # again downloads the PI.g (resp. takes it from the cache), then
-        # downloads the tarball, updates meta.json -- this one will be used
-        # in a separate job
 
       - uses: actions/upload-artifact@v2
         with:
