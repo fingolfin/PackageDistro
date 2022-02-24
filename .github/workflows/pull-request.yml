@@ -16,8 +16,8 @@ jobs:
     name: "Detect packages that were added, removed or modified"
     runs-on: ubuntu-18.04
     outputs:
-      matrix1: ${{ steps.detect-changes.outputs.remove-matrix }}
-      matrix2: ${{ steps.detect-changes.outputs.update-matrix }}
+      remove-matrix: ${{ steps.detect-changes.outputs.remove-matrix }}
+      update-matrix: ${{ steps.detect-changes.outputs.update-matrix }}
     steps:
       - uses: actions/checkout@v2
         with:
