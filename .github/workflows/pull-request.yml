@@ -65,8 +65,13 @@ jobs:
       - name: "Clone package distribution tools"
         run: git clone https://github.com/gap-system/PackageDistroTools
 
-      - name: "TODO"
+      - name: "Check whether anything depends on the package"
         run: echo "TODO"
+        # TODO: could read all JSON files, look at the `NeededOtherPackages`
+        # components, to see if anything else uses this package (no GAP needed!).
+        # But beware, those lists contains package names that are not always lowercased.
+        # TODO: should also SuggestedOtherPackages be considered?
+        # TODO: add special case for GAPDoc, primgrp, transgrp, smallgrp?
 
   add-or-update-package:
     name: "Add or update ${{ matrix.package }}"
@@ -81,5 +86,25 @@ jobs:
       - name: "Clone package distribution tools"
         run: git clone https://github.com/gap-system/PackageDistroTools
 
-      - name: "TODO"
-        run: echo "TODO"
+      - name: "Install GAP"
+        run: echo "TODO: install GAP via a container that contains prerequisits for most/all packages"
+
+      - name: "Obtain copy of old metadata, if any"
+        run: echo "TODO: this can then be passed validate-package.py so it can test if the version of the package increased"
+
+      - name: "Validate metadata"
+        run: echo "TODO: invoke validate-package.py"
+
+      - name: "Install and build package"
+        run: echo "TODO: we also need all dependencies to be compiled -- perhaps can (ab)use PackageManager?"
+
+      - name: "Run package tests with default packages"
+        run: echo "TODO: use TestPackage"
+
+      - name: "Run package tests with minimal packages"
+        run: echo "TODO: use TestPackage and start GAP with -A"
+
+      # TODO: also test `LoadAllPackages` works!
+      # TODO: perhaps: also run packages with `LoadAllPackages`?
+      # TODO: ideally test both with last GAP release (but using the current package distro,
+      #       and also with latest GAP nightly build)
