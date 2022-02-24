@@ -1,0 +1,75 @@
+name: "Assemble the package distribution"
+
+on:
+  workflow_dispatch:  # TODO: for debugging
+  push:
+    branches:
+      - main
+    # TODO: For a tag, assembler the distro, then upload it to that tag (turning it into a release)
+    # this could/should be part of the release process
+    #tags: v[1-9]+.[0-9]+.[0-9]+
+
+concurrency:
+  group: assemble-pkgdist
+  cancel-in-progress: true
+
+jobs:
+  assemble:
+    name: "Assemble the package distribution"
+    runs-on: ubuntu-latest
+    outputs:
+      remove-matrix: ${{ steps.detect-changes.outputs.remove-matrix }}
+      update-matrix: ${{ steps.detect-changes.outputs.update-matrix }}
+    steps:
+      - uses: actions/checkout@v2
+
+      # TODO: if no meta.json file was modified, then skip all remaining steps
+      # (this situation happens if e.g. the workflows or the README.md are updated)
+
+      - name: "Setup _archives symlink"
+        run: mkdir -p ~/_archives && ln -s ~/_archives
+
+      - name: "Cache archives"
+        uses: actions/cache@v2
+        with:
+          path: ~/_archives
+          key: archives
+
+      - name: "Install package distribution tools"
+        run: |
+          git clone https://github.com/gap-system/PackageDistroTools _tools
+          pip install -r _tools/requirements.txt
+
+      - name: "Assemble distribution"
+        run: |
+            echo "TODO: invoke assemble-distro.py, see https://github.com/gap-system/PackageDistroTools/issues/18"
+
+      - name: "Upload distribution archive"
+        run: |
+            # Decide to which tag to update: if the trigger for this job was the
+            # creation of a tag `vX.Y.Z`, then upload to that tag.
+            # Otherwise upload to tag `latest` and move that tag to our commit
+            #     ${{ startsWith(github.ref, 'refs/tags/v') }}
+            echo "TODO: for a tag, upload to that tag"
+            echo "TODO: for a push to master... upload to .... uh..."
+
+      - name: "Retag 'latest' if we are on main"
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.git.updateRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "tags/latest",
+              sha: context.sha
+            })
+
+
+      # TODO: insert step to remove unused archives from the _archive/ directory ???
+
+#      - name: "Make GitHub release"
+#        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+#        run: python -u ./dev/releases/make_github_release.py ${GITHUB_REF#refs/tags/} tmp/
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
