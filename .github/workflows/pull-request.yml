@@ -32,21 +32,21 @@ jobs:
             deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ --)
             modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ --)
 
-            echo "Packages deleted: $deleted"
-
+            echo "Removed packages:"
             MATRIX="{\"package\":["
             for PKG in ${deleted}; do
               PKG=${PKG%"/meta.json"}
+              echo "${PKG}"
               MATRIX="${MATRIX}\"${PKG}\","
             done
             MATRIX="${MATRIX}]}"
             echo "::set-output name=remove-matrix::$MATRIX"
 
-            echo "Packages added: $added"
-            echo "Packages modified: $modified"
+            echo "Added or modified packages:"
             MATRIX="{\"package\":["
             for PKG in ${added} ${modified}; do
               PKG=${PKG%"/meta.json"}
+              echo "${PKG}"
               MATRIX="${MATRIX}\"${PKG}\","
             done
             MATRIX="${MATRIX}]}"
