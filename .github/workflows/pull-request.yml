@@ -16,23 +16,18 @@ jobs:
     name: "Detect packages that were added, removed or modified"
     runs-on: ubuntu-latest
     outputs:
-      remove-matrix: ${{ steps.detect-changes.outputs.remove-matrix }}
-      update-matrix: ${{ steps.detect-changes.outputs.update-matrix }}
+      remove-matrix: ${{ steps.detect-removals.outputs.matrix }}
+      update-matrix: ${{ steps.detect-updates.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 5
 
-      - name: "Determine what was added and what removed"
-        id: detect-changes
+      - name: "Determine what removed"
+        id: detect-removals
         run: |
-            # turn off rename detection here, so we see renmes as "remove + add"
-            # and thus propertly detect if other packages depend on the old name
-            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^ --)
-            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ --)
-            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ --)
-
             echo "Removed packages:"
+            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ --)
             MATRIX="{\"package\":["
             for PKG in ${deleted}; do
               PKG=${PKG%"/meta.json"}
@@ -40,9 +35,14 @@ jobs:
               MATRIX="${MATRIX}\"${PKG}\","
             done
             MATRIX="${MATRIX}]}"
-            echo "::set-output name=remove-matrix::$MATRIX"
+            echo "::set-output name=matrix::$MATRIX"
 
+      - name: "Determine what was added or modified"
+        id: detect-updates
+        run: |
             echo "Added or modified packages:"
+            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^ --)
+            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ --)
             MATRIX="{\"package\":["
             for PKG in ${added} ${modified}; do
               PKG=${PKG%"/meta.json"}
@@ -50,14 +50,13 @@ jobs:
               MATRIX="${MATRIX}\"${PKG}\","
             done
             MATRIX="${MATRIX}]}"
-            echo "::set-output name=update-matrix::$MATRIX"
+            echo "::set-output name=matrix::$MATRIX"
 
   remove-package:
     name: "Remove ${{ matrix.package }}"
     needs: detect-changes
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix: ${{ fromJSON(needs.detect-changes.outputs.remove-matrix) }}
     steps:
       - uses: actions/checkout@v2
@@ -81,7 +80,6 @@ jobs:
     needs: detect-changes
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix: ${{ fromJSON(needs.detect-changes.outputs.update-matrix) }}
     steps:
       - uses: actions/checkout@v2

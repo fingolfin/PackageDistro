@@ -70,7 +70,6 @@ jobs:
     needs: scan-for-updates
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix: ${{ fromJSON(needs.scan-for-updates.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
@@ -84,6 +83,7 @@ jobs:
         with:
           add-paths: ${{ matrix.package }}
           commit-message: "[${{ matrix.package }}] Update"
+          body: ""
           branch: automatic/${{ matrix.package }}
           delete-branch: true
           title: "[${{ matrix.package }}] Update"
