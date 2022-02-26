@@ -59,6 +59,9 @@ jobs:
           git clone https://github.com/gap-system/PackageDistroTools _tools
           pip install -r _tools/requirements.txt
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: "Assemble distribution"
         run: _tools/assemble_distro.py
 
