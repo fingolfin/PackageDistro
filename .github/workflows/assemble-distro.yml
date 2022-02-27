@@ -59,11 +59,17 @@ jobs:
           git clone https://github.com/gap-system/PackageDistroTools _tools
           pip install -r _tools/requirements.txt
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+     # - name: Setup tmate session
+     #   uses: mxschmitt/action-tmate@v3
+     
+     - name: "DEBUG PRE"
+       run: ls -l _archives
 
       - name: "Assemble distribution"
         run: _tools/assemble_distro.py
+
+     - name: "DEBUG POST"
+       run: ls -l _archives
 
       # Decide to which tag to update: if the trigger for this job was the
       # creation of a tag `vX.Y.Z`, then upload to that tag.
