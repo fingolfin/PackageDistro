@@ -64,14 +64,20 @@ jobs:
      # - name: Setup tmate session
      #   uses: mxschmitt/action-tmate@v3
      
-     - name: "DEBUG PRE"
-       run: ls -l _archives
+      - name: "DEBUG PRE"
+        run: ls -l _archives
 
       - name: "Assemble distribution"
         run: _tools/assemble_distro.py
 
-     - name: "DEBUG POST"
-       run: ls -l _archives
+      - name: "DEBUG POST"
+        run: ls -l _archives
+
+      - name: "Cleanup archives"
+        run: _tools/cleanup_archives.py
+
+      - name: "DEBUG POST2"
+        run: ls -l _archives
 
       # Decide to which tag to update: if the trigger for this job was the
       # creation of a tag `vX.Y.Z`, then upload to that tag.
