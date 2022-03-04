@@ -1,0 +1,107 @@
+name: "Test all packages"
+
+on:
+  workflow_dispatch:
+    inputs:
+      pkgarchiveurl:
+        description: 'URL of the package archive to test'
+        required: true
+        type: string
+        default: https://github.com/gap-system/PackageDistro/releases/download/latest/packages.tar.gz
+  workflow_call:
+    inputs:
+      pkgarchiveurl:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: "Build GAP and the packages"
+    runs-on: ubuntu-latest
+    #outputs:
+    #  matrix: ${{ steps.get-names.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install package distribution tools"
+        run: |
+          git clone https://github.com/gap-system/PackageDistroTools _tools
+          pip install -r _tools/requirements.txt
+
+      # TOOD: dependencies should come from a container
+      - name: "Install package build dependencies"
+        run: |
+          deps=$(_tools/gather_dependencies.py */meta.json)
+          if [[ -n "$deps" ]]; then
+            echo "Installing required binary depedencies: $deps"
+            sudo apt-get install $deps
+          else
+            echo "No required binary depedencies to be installed"
+          fi
+
+      - name: "Download packages"
+        run: |
+          curl -L -o $HOME/packages.tar.gz ${{ github.event.inputs.pkgarchiveurl || inputs.pkgarchiveurl }}
+          ls -l $HOME/packages.tar.gz
+          shasum -a 256 $HOME/packages.tar.gz
+          # TODO: also download and test checksum???
+
+      # TOOD: gap should come from a container
+      - name: "Install GAP"
+        run: |
+          git clone --depth=2 -b master https://github.com/gap-system/gap.git $HOME/gap
+          cd $HOME/gap
+
+          echo "::group::autogen"
+          ./autogen.sh
+          echo "::endgroup::"
+
+          echo "::group::configure"
+          ./configure $GAP_CONFIGFLAGS
+          echo "::endgroup::"
+
+          echo "::group::make"
+          make -j4
+          echo "::endgroup::"
+
+          # put GAP into PATH
+          ln -s $HOME/gap/bin/gap.sh /usr/local/bin/gap
+
+
+      - name: "Extract packages"
+        run: |
+          mkdir -p $HOME/gap/pkg
+          cd $HOME/gap/pkg
+          tar xvf $HOME/packages.tar.gz
+
+      - name: "Build packages"
+        run: |
+          cd $HOME/gap/pkg
+
+          # HACK: prevent BuildPackages.sh from building the Normaliz verison
+          # "bundled" with NormalizInterface, as this is very slow (takes 5-10
+          # minutes). Instead we want it to use libnormaliz-dev installed by
+          # us
+          rm -f */build-normaliz.sh
+
+          # skip xgap: no X11 headers, and no means to test it
+          rm -rf xgap*
+
+          # skip itc because it requires xgap
+          rm -rf itc*
+
+          MAKEFLAGS=-j3 ../bin/BuildPackages.sh --strict
+
+      - name: "Create tarball"
+        run: |
+          cd $HOME
+          tar cf gap.tar gap
+          gzip gap.tar
+
+      - name: "Upload GAP with packages as artifact"
+        uses: actions/upload-artifact@v2
+        with:
+          name: gap
+          path: /home/runner/gap.tar.gz
+
+      # TODO: create a job matrix with entries for each package
