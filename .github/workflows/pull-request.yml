@@ -25,7 +25,7 @@ jobs:
       - name: "Determine what was removed"
         id: detect-removals
         run: |
-            deleted=$(git diff --name-only --no-renames --diff-filter=D HEAD^ -- */meta.json)
+            deleted=$(git diff --name-only --no-renames --diff-filter=D ${GITHUB_BASE_REF} -- */meta.json)
             MATRIX="{\"package\":["
             for PKG in ${deleted}; do
               PKG=${PKG%"/meta.json"}
@@ -39,8 +39,8 @@ jobs:
       - name: "Determine what was added or modified"
         id: detect-updates
         run: |
-            added=$(git diff --name-only --no-renames --diff-filter=A HEAD^ -- */meta.json)
-            modified=$(git diff --name-only --no-renames --diff-filter=M HEAD^ -- */meta.json)
+            added=$(git diff --name-only --no-renames --diff-filter=A ${GITHUB_BASE_REF} -- */meta.json)
+            modified=$(git diff --name-only --no-renames --diff-filter=M ${GITHUB_BASE_REF} -- */meta.json)
             MATRIX="{\"package\":["
             for PKG in ${added} ${modified}; do
               PKG=${PKG%"/meta.json"}
@@ -101,6 +101,8 @@ jobs:
 
       - name: "Obtain copy of old metadata, if any"
         run: |
+          # FIXME: use of HEAD^ is in general insufficient, namely when a PR
+          # contains multiple commits it can fail
           git show HEAD^:${{ matrix.package }}/meta.json > ${{ matrix.package }}/meta.json.old || :
 
       - name: "Validate metadata"
