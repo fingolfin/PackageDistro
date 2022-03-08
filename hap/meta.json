@@ -125,7 +125,7 @@
       "SixFile": "doc/manual.six"
     }
   ],
-  "PackageInfoSHA256": "f2149cb9e1deb2439207e673c7218f3241957c8e84159b38cbb7ea9459dc9274",
+  "PackageInfoSHA256": "22f90d0fdc45c088019e0b4447f6af0d66cca5087a31d88d8c53939aab2882ba",
   "PackageInfoURL": "https://gap-packages.github.io/hap/PackageInfo.g",
   "PackageName": "HAP",
   "PackageWWWHome": "https://gap-packages.github.io/hap",
