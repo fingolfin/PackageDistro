@@ -1,0 +1,16 @@
+{
+  "current": "4.11.1/2022-04-08-03:32:32-fbf9b45c",
+  "last": "4.11.1/2022-04-07-03:19:41-fbf9b45c",
+  "total": 152,
+  "failure": 10,
+  "success": 122,
+  "skipped": 20,
+  "new": 0,
+  "removed": 0,
+  "failure_changed": 0,
+  "success_changed": 0,
+  "skipped_changed": 0,
+  "failure_same": 10,
+  "success_same": 122,
+  "skipped_same": 20
+}
