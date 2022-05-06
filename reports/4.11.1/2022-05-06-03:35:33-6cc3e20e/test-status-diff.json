@@ -1,0 +1,16 @@
+{
+  "current": "4.11.1/2022-05-06-03:35:33-6cc3e20e",
+  "last": "4.11.1/2022-05-05-03:51:51-6cc3e20e",
+  "total": 152,
+  "failure": 8,
+  "success": 124,
+  "skipped": 20,
+  "new": 0,
+  "removed": 0,
+  "failure_changed": 1,
+  "success_changed": 0,
+  "skipped_changed": 0,
+  "failure_same": 7,
+  "success_same": 124,
+  "skipped_same": 20
+}
