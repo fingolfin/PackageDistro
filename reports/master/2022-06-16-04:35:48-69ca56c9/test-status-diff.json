@@ -1,0 +1,16 @@
+{
+  "current": "master/2022-06-16-04:35:48-69ca56c9",
+  "last": "master/2022-06-15-04:16:17-69ca56c9",
+  "total": 153,
+  "failure": 9,
+  "success": 124,
+  "skipped": 20,
+  "new": 0,
+  "removed": 0,
+  "failure_changed": 0,
+  "success_changed": 0,
+  "skipped_changed": 0,
+  "failure_same": 9,
+  "success_same": 124,
+  "skipped_same": 20
+}
