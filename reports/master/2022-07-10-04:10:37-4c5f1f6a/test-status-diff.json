@@ -1,0 +1,16 @@
+{
+  "current": "master/2022-07-10-04:10:37-4c5f1f6a",
+  "last": "master/2022-07-09-15:11:32-4c5f1f6a",
+  "total": 153,
+  "failure": 11,
+  "success": 122,
+  "skipped": 20,
+  "new": 0,
+  "removed": 0,
+  "failure_changed": 0,
+  "success_changed": 0,
+  "skipped_changed": 0,
+  "failure_same": 11,
+  "success_same": 122,
+  "skipped_same": 20
+}
